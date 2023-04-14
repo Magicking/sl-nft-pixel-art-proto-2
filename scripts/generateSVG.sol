@@ -21,7 +21,9 @@ contract generateSVG is Script {
         INounsToken nounsToken = INounsToken(nounsTokenAddress);
         //INounsSeeder.Seed memory seed = nounsToken.seeder().generateSeed(tokenId, nounsToken.descriptor());
         INounsSeeder.Seed memory seed = nounsToken.seeds(tokenId);
-        seed.glasses = seed.glasses+1;
+        uint48 h = uint48(uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), tokenId))));
+        uint48 gCount = uint48(nounsToken.descriptor().glassesCount());
+        seed.glasses = (seed.glasses+h) % gCount;
         return (nounsToken.descriptor().tokenURI(tokenId, seed), seed);
     }
 
