@@ -1,3 +1,5 @@
 cache/
 out/
-.vscode/
+.vscode/broadcast
+broadcast/
+.env

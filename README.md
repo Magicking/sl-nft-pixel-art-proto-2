@@ -37,3 +37,9 @@ make build
 ```
 make test
 ```
+
+### Generate SVG files
+
+```
+forge "script" --fork-url "https://eth-mainnet.g.alchemy.com/v2/${YOUR_API_KEY}" scripts/generateSVG.sol && cat image.b64uri | cut -d, -f2 | base64 -d -i | jq -r .image | cut -d, -f2 | base64 -d -i > image.svg
+```
