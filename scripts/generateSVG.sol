@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.19;
 
 import "forge-std/Script.sol";
 import "../src/Contract.sol";
@@ -17,9 +17,12 @@ contract generateSVG is Script {
         // and then call the INounsDescriptor to obtain the dataURI
         // and then call the INounsDescriptor to obtain the genericDataURI
         // and then call the INounsDescriptor to obtain the generateSVGImage
-        address nounsTokenAddress = 0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03;
+        //address nounsTokenAddress = 0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03; // Nouns
+        address nounsTokenAddress = 0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B; // LilNous
         INounsToken nounsToken = INounsToken(nounsTokenAddress);
         //INounsSeeder.Seed memory seed = nounsToken.seeder().generateSeed(tokenId, nounsToken.descriptor());
+        //tokenId = nounsToken.totalSupply();
+        console.log("tokenId:", tokenId);
         INounsSeeder.Seed memory seed = nounsToken.seeds(tokenId);
         uint48 h = uint48(uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), tokenId))));
         uint48 gCount = uint48(nounsToken.descriptor().glassesCount());
@@ -29,7 +32,16 @@ contract generateSVG is Script {
 
     function run() external {
 
-        (string memory uriS, INounsSeeder.Seed memory seed) = tokenURI2(120);
+      // usurpate / prank to minter address
+        address nounsTokenAddress = 0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B; // LilNous
+        INounsToken nounsToken = INounsToken(nounsTokenAddress);
+      address minter = nounsToken.minter();
+      vm.prank(minter);
+      // call mint() to return currentNoudId
+      uint256 currentInternalId=nounsToken.mint();
+      // usurpate and set tokenid
+      console.log("expected internal id", currentInternalId);
+        (string memory uriS, INounsSeeder.Seed memory seed) = tokenURI2(7621);
         
         bytes memory uri = bytes(uriS);
         vm.writeFileBinary("./image.b64uri", uri);

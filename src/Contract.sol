@@ -137,6 +137,8 @@ interface INounsToken {
     event SeederLocked();
 
     function mint() external returns (uint256);
+    function minter() external returns (address);
+    function totalSupply() external view returns (uint256);
 
     function burn(uint256 tokenId) external;
 
