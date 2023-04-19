@@ -10,12 +10,7 @@ interface ERC721tokenURI {
 
 contract generateSVG is Script {
 
-    function tokenURI2(uint256 tokenId) public view returns (string memory, INounsSeeder.Seed memory) {
-        //TODO: create a function that call the NounsToken 0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03 to obtain the seed generator address
-        // and then call the INounsSeeder to obtain the seed
-        // and then call the INounsDescriptor to obtain the tokenURI
-        //address nounsTokenAddress = 0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03; // Nouns
-        address nounsTokenAddress = 0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B; // LilNouns
+    function tokenURI2(address nounsTokenAddress, uint256 tokenId) public view returns (string memory, INounsSeeder.Seed memory) {
         INounsToken nounsToken = INounsToken(nounsTokenAddress);
         //INounsSeeder.Seed memory seed = nounsToken.seeder().generateSeed(tokenId, nounsToken.descriptor());
         INounsSeeder.Seed memory seed;
@@ -37,12 +32,17 @@ contract generateSVG is Script {
     }
 
     function run() external {
-        address nounsTokenAddress = 0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B; // LilNouns
-        bytes32 CURRENT_INTERNAL_ID_SLOT = bytes32(0x0000000000000000000000000000000000000000000000000000000000000015);
+        // Nouns
+       // address nounsTokenAddress = 0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03;bytes32 CURRENT_INTERNAL_ID_SLOT = bytes32(0x0000000000000000000000000000000000000000000000000000000000000014);
+        // LilNouns
+      address nounsTokenAddress = 0x4b10701Bfd7BFEdc47d50562b76b436fbB5BdB3B;bytes32 CURRENT_INTERNAL_ID_SLOT = bytes32(0x0000000000000000000000000000000000000000000000000000000000000015);
+        
         uint256 currentInternalId = uint256(vm.load(address(nounsTokenAddress), CURRENT_INTERNAL_ID_SLOT));
 
+        console.log("nouns address", nounsTokenAddress);
+        console.log("blocknumber", block.number);
         console.log("expected internal id", currentInternalId);
-        (string memory uriS, INounsSeeder.Seed memory seed) = tokenURI2(currentInternalId);
+        (string memory uriS, INounsSeeder.Seed memory seed) = tokenURI2(nounsTokenAddress, currentInternalId);
         
         bytes memory uri = bytes(uriS);
         vm.writeFileBinary("./image.b64uri", uri);
